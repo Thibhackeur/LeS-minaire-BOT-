@@ -131,12 +131,4 @@ if __name__ == "__main__":
         if sys.argv[1] == "bot":
             # Mode bot Discord
             run_discord_bot()
-        else:
-            # Mode application web avec port spécifié ou par défaut
-            port = 8080 if sys.argv[1] == "web8080" else 5000
-            run_web_app(port)
-else:
-    # Pour Gunicorn - initialise l'application web
-    from app import app, initialize_db
-    with app.app_context():
-        initialize_db()
+     
