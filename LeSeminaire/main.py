@@ -109,13 +109,6 @@ def run_discord_bot():
         print(f"ERREUR lors du démarrage du bot Discord: {e}")
 
 # Fonction pour démarrer l'application web
-def run_web_app(port=5000):
-    print(f"Démarrage de l'application web sur le port {port}...")
-    from app import app, initialize_db
-    with app.app_context():
-        initialize_db()
-    if __name__ == "__main__" and 'app' in globals():
-        app.run(host="0.0.0.0", port=port, debug=True)
     return app  # Pour Gunicorn
 
 # Point d'entrée principal
