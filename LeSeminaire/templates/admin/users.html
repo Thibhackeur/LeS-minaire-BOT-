@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Gestion des Utilisateurs{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-form {
+        margin-bottom: 1.5rem;
+    }
+    .user-card {
+        transition: all 0.2s ease;
+        border-left: 4px solid transparent;
+    }
+    .user-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .user-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+    .user-status-online {
+        color: var(--bs-success);
+    }
+    .user-status-idle {
+        color: var(--bs-warning);
+    }
+    .user-status-dnd {
+        color: var(--bs-danger);
+    }
+    .user-status-offline {
+        color: var(--bs-secondary);
+    }
+    .roles-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+    .sorting-icon {
+        font-size: 0.8rem;
+        margin-left: 0.3rem;
+    }
+    .filter-badge {
+        background-color: var(--bs-light);
+        color: var(--bs-dark);
+        border: 1px solid var(--bs-gray-300);
+        margin-right: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+    .filter-badge:hover {
+        background-color: var(--bs-gray-200);
+    }
+    .filter-badge.active {
+        background-color: var(--bs-primary);
+        color: white;
+        border-color: var(--bs-primary);
+    }
+    .user-table th {
+        cursor: pointer;
+    }
+    .user-table th, .user-table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i data-feather="users" class="me-2"></i> Gestion des Utilisateurs
+        </h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+            <i data-feather="arrow-left" class="me-1"></i> Retour au tableau de bord
+        </a>
+    </div>
+    
+    <!-- Filtres et recherche -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row align-items-end">
+                <div class="col-md-8">
+                    <form class="search-form" method="GET" action="{{ url_for('admin_users') }}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Rechercher par nom d'utilisateur, ID, ou serveur..." name="search" value="{{ search_query if search_query }}">
+                            <button class="btn btn-primary" type="submit">
+                                <i data-feather="search" class="me-1"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                        <i data-feather="filter" class="me-1"></i> Filtres avancés
+                    </button>
+                </div>
+            </div>
+            
+            <div class="collapse mt-3" id="advancedFilters">
+                <div class="card card-body bg-light">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Statut</label>
+                            <div>
+                                <span class="filter-badge active" data-filter="status" data-value="all">Tous</span>
+                                <span class="filter-badge" data-filter="status" data-value="online">
+                                    <i data-feather="circle" class="user-status-online me-1"></i> En ligne
+                                </span>
+                                <span class="filter-badge" data-filter="status" data-value="idle">
+                                    <i data-feather="moon" class="user-status-idle me-1"></i> Inactif
+                                </span>
+                                <span class="filter-badge" data-filter="status" data-value="dnd">
+                                    <i data-feather="slash" class="user-status-dnd me-1"></i> Ne pas déranger
+                                </span>
+                                <span class="filter-badge" data-filter="status" data-value="offline">
+                                    <i data-feather="circle" class="user-status-offline me-1"></i> Hors ligne
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Rôles</label>
+                            <div>
+                                <span class="filter-badge active" data-filter="role" data-value="all">Tous</span>
+                                <span class="filter-badge" data-filter="role" data-value="admin">Admin</span>
+                                <span class="filter-badge" data-filter="role" data-value="moderator">Modérateur</span>
+                                <span class="filter-badge" data-filter="role" data-value="verified">Vérifié</span>
+                                <span class="filter-badge" data-filter="role" data-value="unverified">Non Vérifié</span>
+                                <span class="filter-badge" data-filter="role" data-value="artist">Artiste</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date d'arrivée</label>
+                            <div>
+                                <span class="filter-badge active" data-filter="joined" data-value="all">Tous</span>
+                                <span class="filter-badge" data-filter="joined" data-value="today">Aujourd'hui</span>
+                                <span class="filter-badge" data-filter="joined" data-value="week">Cette semaine</span>
+                                <span class="filter-badge" data-filter="joined" data-value="month">Ce mois</span>
+                                <span class="filter-badge" data-filter="joined" data-value="year">Cette année</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Activité</label>
+                            <div>
+                                <span class="filter-badge active" data-filter="activity" data-value="all">Tous</span>
+                                <span class="filter-badge" data-filter="activity" data-value="active">Actifs</span>
+                                <span class="filter-badge" data-filter="activity" data-value="inactive">Inactifs</span>
+                                <span class="filter-badge" data-filter="activity" data-value="warning">Avertissement</span>
+                                <span class="filter-badge" data-filter="activity" data-value="banned">Bannis</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2">
+                        <button class="btn btn-sm btn-outline-secondary me-2" id="resetFilters">Réinitialiser</button>
+                        <button class="btn btn-sm btn-primary" id="applyFilters">Appliquer</button>
+                    </div>
+                </div>
+            </div>
+            
+            {% if filters_active %}
+            <div class="mt-3">
+                <span class="badge bg-primary me-1">Filtres actifs:</span>
+                {% for filter in active_filters %}
+                <span class="badge bg-secondary">
+                    {{ filter.name }}: {{ filter.value }}
+                    <a href="{{ filter.remove_url }}" class="text-white ms-1"><i data-feather="x" class="icon-sm"></i></a>
+                </span>
+                {% endfor %}
+                <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-danger ms-2">
+                    <i data-feather="x" class="me-1"></i> Effacer tous les filtres
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Liste des utilisateurs -->
+    <div class="card shadow">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Utilisateurs ({{ users|length }} sur {{ total_users }})</h5>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-primary" id="exportCSV">
+                    <i data-feather="download" class="me-1"></i> Exporter CSV
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="printList">
+                    <i data-feather="printer" class="me-1"></i> Imprimer
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover user-table">
+                    <thead>
+                        <tr>
+                            <th scope="col" width="40">#</th>
+                            <th scope="col" data-sort="username">
+                                Utilisateur 
+                                <i data-feather="chevron-up" class="sorting-icon"></i>
+                            </th>
+                            <th scope="col" data-sort="id">ID Discord</th>
+                            <th scope="col" data-sort="joined">Date d'arrivée</th>
+                            <th scope="col" data-sort="status">Statut</th>
+                            <th scope="col">Rôles</th>
+                            <th scope="col" data-sort="activity">Dernière activité</th>
+                            <th scope="col" width="120">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <th scope="row">{{ loop.index + offset }}</th>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ user.avatar_url }}" alt="{{ user.username }}" class="user-avatar me-2">
+                                    <div>
+                                        <div class="fw-bold">{{ user.username }}</div>
+                                        <small class="text-muted">{{ user.display_name }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><code>{{ user.id }}</code></td>
+                            <td>{{ user.joined_at.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                {% if user.status == 'online' %}
+                                <i data-feather="circle" class="user-status-online me-1"></i> En ligne
+                                {% elif user.status == 'idle' %}
+                                <i data-feather="moon" class="user-status-idle me-1"></i> Inactif
+                                {% elif user.status == 'dnd' %}
+                                <i data-feather="slash" class="user-status-dnd me-1"></i> Ne pas déranger
+                                {% else %}
+                                <i data-feather="circle" class="user-status-offline me-1"></i> Hors ligne
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="roles-container">
+                                    {% for role in user.roles %}
+                                    <span class="badge" style="background-color: {{ role.color }};">{{ role.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>{{ user.last_activity }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#userModal{{ user.id }}">
+                                        <i data-feather="eye" class="icon-sm"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="sendDirectMessage('{{ user.id }}')">
+                                        <i data-feather="message-square" class="icon-sm"></i>
+                                    </button>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i data-feather="more-vertical" class="icon-sm"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item text-primary" href="{{ url_for('admin_user_view', user_id=user.id) }}">
+                                                <i data-feather="user" class="icon-sm me-2"></i> Voir profil
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('admin_user_roles', user_id=user.id) }}">
+                                                <i data-feather="settings" class="icon-sm me-2"></i> Gérer les rôles
+                                            </a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            {% if user.is_verified %}
+                                            <li><a class="dropdown-item text-warning" href="{{ url_for('admin_user_unverify', user_id=user.id) }}">
+                                                <i data-feather="shield-off" class="icon-sm me-2"></i> Retirer vérification
+                                            </a></li>
+                                            {% else %}
+                                            <li><a class="dropdown-item text-success" href="{{ url_for('admin_user_verify', user_id=user.id) }}">
+                                                <i data-feather="shield" class="icon-sm me-2"></i> Vérifier utilisateur
+                                            </a></li>
+                                            {% endif %}
+                                            <li><a class="dropdown-item text-warning" href="{{ url_for('admin_user_warn', user_id=user.id) }}">
+                                                <i data-feather="alert-triangle" class="icon-sm me-2"></i> Avertir
+                                            </a></li>
+                                            <li><a class="dropdown-item text-warning" href="{{ url_for('admin_user_kick', user_id=user.id) }}">
+                                                <i data-feather="log-out" class="icon-sm me-2"></i> Expulser
+                                            </a></li>
+                                            <li><a class="dropdown-item text-danger" href="{{ url_for('admin_user_ban', user_id=user.id) }}" onclick="return confirm('Êtes-vous sûr de vouloir bannir cet utilisateur ?')">
+                                                <i data-feather="slash" class="icon-sm me-2"></i> Bannir
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- Modal détaillé de l'utilisateur -->
+                                <div class="modal fade" id="userModal{{ user.id }}" tabindex="-1" aria-labelledby="userModalLabel{{ user.id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="userModalLabel{{ user.id }}">Profil de {{ user.username }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-4 text-center">
+                                                        <img src="{{ user.avatar_url }}" alt="{{ user.username }}" class="img-fluid rounded mb-3" style="max-width: 150px;">
+                                                        <h5>{{ user.display_name }}</h5>
+                                                        <p><code>{{ user.id }}</code></p>
+                                                        <div class="mb-3">
+                                                            {% if user.status == 'online' %}
+                                                            <span class="badge bg-success">En ligne</span>
+                                                            {% elif user.status == 'idle' %}
+                                                            <span class="badge bg-warning text-dark">Inactif</span>
+                                                            {% elif user.status == 'dnd' %}
+                                                            <span class="badge bg-danger">Ne pas déranger</span>
+                                                            {% else %}
+                                                            <span class="badge bg-secondary">Hors ligne</span>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="d-grid gap-2">
+                                                            <button class="btn btn-sm btn-outline-primary" onclick="sendDirectMessage('{{ user.id }}')">
+                                                                <i data-feather="message-square" class="me-1"></i> Message privé
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <h6 class="border-bottom pb-2 mb-3">Informations</h6>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Membre depuis:</strong></p>
+                                                                <p>{{ user.joined_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Compte créé le:</strong></p>
+                                                                <p>{{ user.created_at.strftime('%d/%m/%Y') }}</p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <h6 class="border-bottom pb-2 mb-3">Rôles</h6>
+                                                        <div class="mb-3">
+                                                            {% for role in user.roles %}
+                                                            <span class="badge mb-1" style="background-color: {{ role.color }};">{{ role.name }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                        
+                                                        <h6 class="border-bottom pb-2 mb-3">Activité</h6>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Dernière activité:</strong></p>
+                                                                <p>{{ user.last_activity }}</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Messages envoyés:</strong></p>
+                                                                <p>{{ user.message_count }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Commandes utilisées:</strong></p>
+                                                                <p>{{ user.command_count }}</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Avertissements:</strong></p>
+                                                                <p>{{ user.warning_count }}</p>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {% if user.notes %}
+                                                        <h6 class="border-bottom pb-2 mb-3">Notes administratives</h6>
+                                                        <div class="card bg-light">
+                                                            <div class="card-body">
+                                                                <p class="card-text">{{ user.notes }}</p>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                <a href="{{ url_for('admin_user_view', user_id=user.id) }}" class="btn btn-primary">
+                                                    Profil détaillé
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav aria-label="Pagination">
+                    <ul class="pagination">
+                        <li class="page-item {{ 'disabled' if page == 1 else '' }}">
+                            <a class="page-link" href="{{ url_for('admin_users', page=page-1, **request.args) if page > 1 else '#' }}" aria-label="Précédent">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        
+                        {% for p in range(1, total_pages + 1) %}
+                        {% if p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                        <li class="page-item {{ 'active' if p == page else '' }}">
+                            <a class="page-link" href="{{ url_for('admin_users', page=p, **request.args) }}">{{ p }}</a>
+                        </li>
+                        {% elif p == page - 3 or p == page + 3 %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">...</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        
+                        <li class="page-item {{ 'disabled' if page == total_pages else '' }}">
+                            <a class="page-link" href="{{ url_for('admin_users', page=page+1, **request.args) if page < total_pages else '#' }}" aria-label="Suivant">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser les icônes Feather
+        feather.replace();
+        
+        // Gestion des filtres badges
+        document.querySelectorAll('.filter-badge').forEach(badge => {
+            badge.addEventListener('click', function() {
+                const filterGroup = this.getAttribute('data-filter');
+                const filterValue = this.getAttribute('data-value');
+                
+                // Désactiver tous les badges du même groupe
+                document.querySelectorAll(`.filter-badge[data-filter="${filterGroup}"]`).forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Activer ce badge
+                this.classList.add('active');
+            });
+        });
+        
+        // Réinitialiser les filtres
+        document.getElementById('resetFilters').addEventListener('click', function() {
+            document.querySelectorAll('.filter-badge').forEach(badge => {
+                badge.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.filter-badge[data-value="all"]').forEach(badge => {
+                badge.classList.add('active');
+            });
+        });
+        
+        // Appliquer les filtres
+        document.getElementById('applyFilters').addEventListener('click', function() {
+            const params = new URLSearchParams(window.location.search);
+            
+            // Récupérer tous les filtres actifs
+            document.querySelectorAll('.filter-badge.active').forEach(badge => {
+                const filterGroup = badge.getAttribute('data-filter');
+                const filterValue = badge.getAttribute('data-value');
+                
+                if (filterValue !== 'all') {
+                    params.set(filterGroup, filterValue);
+                } else {
+                    params.delete(filterGroup);
+                }
+            });
+            
+            // Rediriger avec les paramètres de filtrage
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        });
+        
+        // Tri des colonnes
+        document.querySelectorAll('th[data-sort]').forEach(header => {
+            header.addEventListener('click', function() {
+                const sortField = this.getAttribute('data-sort');
+                const params = new URLSearchParams(window.location.search);
+                
+                // Inverser le tri si le champ est déjà trié
+                if (params.get('sort') === sortField) {
+                    if (params.get('order') === 'desc') {
+                        params.set('order', 'asc');
+                    } else {
+                        params.set('order', 'desc');
+                    }
+                } else {
+                    params.set('sort', sortField);
+                    params.set('order', 'asc');
+                }
+                
+                // Rediriger avec les paramètres de tri
+                window.location.href = `${window.location.pathname}?${params.toString()}`;
+            });
+        });
+        
+        // Export CSV
+        document.getElementById('exportCSV').addEventListener('click', function() {
+            window.location.href = "{{ url_for('admin_users_export_csv', **request.args) }}";
+        });
+        
+        // Impression
+        document.getElementById('printList').addEventListener('click', function() {
+            window.print();
+        });
+    });
+    
+    // Envoyer un message direct
+    function sendDirectMessage(userId) {
+        // Cette fonction sera implémentée côté serveur pour envoyer un DM via le bot
+        fetch(`/admin/send-dm/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: prompt('Entrez votre message:')
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Message envoyé avec succès!');
+            } else {
+                alert('Erreur lors de l\'envoi du message: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de l\'envoi du message.');
+        });
+    }
+</script>
+{% endblock %}

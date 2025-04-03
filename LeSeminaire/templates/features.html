@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Fonctionnalités{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <h1 class="display-5 fw-bold mb-5 text-center">Fonctionnalités du Bot</h1>
+    
+    <div class="row g-4">
+        <!-- Gestion de Communauté -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary bg-opacity-75 text-white">
+                    <h3 class="mb-0">Gestion de Communauté</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Système de Bienvenue</h5>
+                        <p>Accueillez chaleureusement vos nouveaux membres avec des messages personnalisés et des cartes de bienvenue générées dynamiquement.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">💬 Messages personnalisés dans un canal dédié</li>
+                            <li class="list-group-item">🎨 Cartes de bienvenue visuelles avec avatar</li>
+                            <li class="list-group-item">📊 Statistiques d'arrivée des membres</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="mb-3">Vérification en Deux Étapes</h5>
+                        <p>Protégez votre serveur des comptes indésirables avec un système de vérification robuste.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">🔒 Captcha dans le canal de vérification</li>
+                            <li class="list-group-item">✅ Confirmation des règles par réaction</li>
+                            <li class="list-group-item">🎭 Attribution automatique du rôle "Vérifié"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Attribution de Rôles -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-warning bg-opacity-75 text-dark">
+                    <h3 class="mb-0">Attribution de Rôles</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Rôles par Réaction</h5>
+                        <p>Permettez à vos membres de choisir leurs rôles en réagissant à un message avec des émojis spécifiques.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">🎧 → Ingé son</li>
+                            <li class="list-group-item">🥁 → Beatmaker</li>
+                            <li class="list-group-item">🎤 → Rappeur</li>
+                            <li class="list-group-item">🎸 → Musicien</li>
+                            <li class="list-group-item">🎥 → Vidéaste</li>
+                            <li class="list-group-item">📸 → Photographe</li>
+                            <li class="list-group-item">🎨 → Graphiste</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modération -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-danger bg-opacity-75 text-white">
+                    <h3 class="mb-0">Outils de Modération</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Commandes de Modération</h5>
+                        <p>Gardez le contrôle de votre serveur avec des commandes de modération efficaces.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">⚠️ Avertissements avec suivi</li>
+                            <li class="list-group-item">⏱️ Mise en sourdine temporaire</li>
+                            <li class="list-group-item">🚫 Bannissement avec raison</li>
+                            <li class="list-group-item">🧹 Suppression de messages en masse</li>
+                            <li class="list-group-item">📝 Journalisation des actions de modération</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fonctionnalités Musicales -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-info bg-opacity-75 text-white">
+                    <h3 class="mb-0">Fonctionnalités Musicales</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Lecteur Musical</h5>
+                        <p>Écoutez de la musique dans vos salons vocaux avec un système de file d'attente avancé.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">🎵 Lecture depuis YouTube</li>
+                            <li class="list-group-item">📋 File d'attente interactive</li>
+                            <li class="list-group-item">🔄 Lecture en boucle</li>
+                            <li class="list-group-item">🔊 Contrôle du volume</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="mb-3">Partage de Samples</h5>
+                        <p>Partagez et retrouvez facilement des samples musicaux avec votre communauté.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">🎧 Base de données de samples organisée</li>
+                            <li class="list-group-item">🔍 Recherche par mot-clé ou genre</li>
+                            <li class="list-group-item">📊 Informations détaillées (BPM, tonalité, etc.)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Collaboration Artistique -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success bg-opacity-75 text-white">
+                    <h3 class="mb-0">Collaboration Artistique</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Projets Collaboratifs</h5>
+                        <p>Facilitez la collaboration entre artistes avec des outils dédiés.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">👥 Création de groupes de projet</li>
+                            <li class="list-group-item">📅 Suivi des échéances</li>
+                            <li class="list-group-item">🎵 Partage de versions de travail</li>
+                            <li class="list-group-item">💬 Salons dédiés automatisés</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ressources Artistiques -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-secondary bg-opacity-75 text-white">
+                    <h3 class="mb-0">Ressources Artistiques</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="mb-3">Base de Connaissances</h5>
+                        <p>Accédez à des ressources utiles pour votre développement artistique.</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">📚 Tutoriels et guides</li>
+                            <li class="list-group-item">🧰 Outils et logiciels recommandés</li>
+                            <li class="list-group-item">📘 Ressources sur la SACEM et l'intermittence</li>
+                            <li class="list-group-item">🔍 Recherche par catégorie</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <h3>Prêt à améliorer votre communauté artistique ?</h3>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="https://discord.com/api/oauth2/authorize?client_id=1356981134151520296&permissions=8&scope=bot" class="btn btn-primary btn-lg">Inviter le Bot</a>
+            <a href="{{ url_for('commands') }}" class="btn btn-outline-secondary btn-lg">Voir les Commandes</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+
+{% block title %}Sécurité | LeSéminaire[BOT]{% endblock %}
+
+{% block styles %}
+<style>
+    .security-header {
+        background: linear-gradient(135deg, var(--bs-primary), var(--bs-danger));
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        border-radius: 0 0 1rem 1rem;
+    }
+    .shield-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+    .feature-card {
+        border: none;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--bs-primary);
+    }
+    .danger-section {
+        background-color: rgba(var(--bs-danger-rgb), 0.05);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin: 3rem 0;
+    }
+    .security-level {
+        padding: 1.5rem;
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .security-level:hover {
+        transform: scale(1.02);
+    }
+    .level-low {
+        background-color: rgba(var(--bs-success-rgb), 0.1);
+        border-left: 5px solid var(--bs-success);
+    }
+    .level-medium {
+        background-color: rgba(var(--bs-warning-rgb), 0.1);
+        border-left: 5px solid var(--bs-warning);
+    }
+    .level-high {
+        background-color: rgba(var(--bs-danger-rgb), 0.1);
+        border-left: 5px solid var(--bs-danger);
+    }
+    .level-extreme {
+        background-color: rgba(var(--bs-dark-rgb), 0.1);
+        border-left: 5px solid var(--bs-dark);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="security-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4 fw-bold">Protection Avancée</h1>
+                <p class="lead">Système de sécurité intégré contre le spam, les raids et les attaques</p>
+            </div>
+            <div class="col-md-4 text-center text-md-end">
+                <i data-feather="shield" class="shield-icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Introduction -->
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto text-center">
+            <h2 class="mb-4">Un bouclier pour votre serveur</h2>
+            <p class="lead">LeSéminaire[BOT] intègre des systèmes avancés de protection pour garantir la sécurité de votre communauté contre diverses menaces: spam, raids, attaques DDoS, bots malveillants et plus encore.</p>
+        </div>
+    </div>
+    
+    <!-- Principales Fonctionnalités -->
+    <div class="row mb-5 g-4">
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="card-body text-center">
+                    <i data-feather="shield" class="feature-icon"></i>
+                    <h3 class="h4">Protection Anti-Spam</h3>
+                    <p>Détecte et bloque automatiquement les messages répétitifs, les mentions excessives et autres formes de spam.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="card-body text-center">
+                    <i data-feather="users" class="feature-icon"></i>
+                    <h3 class="h4">Protection Anti-Raid</h3>
+                    <p>Détecte les afflux anormaux de nouveaux membres et active automatiquement le verrouillage du serveur.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="card-body text-center">
+                    <i data-feather="alert-triangle" class="feature-icon"></i>
+                    <h3 class="h4">Protection Anti-DDoS</h3>
+                    <p>Protège contre les tentatives de surcharge du serveur en limitant les taux de requêtes et en bloquant les comportements suspects.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5 g-4">
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="card-body text-center">
+                    <i data-feather="check-circle" class="feature-icon"></i>
+                    <h3 class="h4">Vérification des Membres</h3>
+                    <p>Système de vérification en deux étapes pour s'assurer que seuls des utilisateurs légitimes rejoignent votre serveur.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="card-body text-center">
+                    <i data-feather="eye" class="feature-icon"></i>
+                    <h3 class="h4">Détection des Bots</h3>
+                    <p>Identifie et bloque automatiquement les comptes suspects ayant des comportements de bots malveillants.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card shadow-sm">
+                <div class="card-body text-center">
+                    <i data-feather="activity" class="feature-icon"></i>
+                    <h3 class="h4">Surveillance Continue</h3>
+                    <p>Analyse en permanence l'activité du serveur pour détecter et neutraliser les menaces potentielles.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Niveaux de Sécurité -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Niveaux de Protection Personnalisables</h2>
+            <p class="text-center mb-5">Adaptez le niveau de sécurité selon vos besoins, de la protection basique à la sécurité maximale.</p>
+            
+            <div class="security-level level-low">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h3 class="h4">Niveau Faible</h3>
+                        <span class="badge bg-success">Relaxé</span>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="mb-2">Protection de base contre le spam évident et les raids massifs.</p>
+                        <ul class="small">
+                            <li>Limite de messages: 10 messages/10s</li>
+                            <li>Limite de mentions: 5 par message</li>
+                            <li>Protection anti-raid basique</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="security-level level-medium">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h3 class="h4">Niveau Moyen</h3>
+                        <span class="badge bg-warning text-dark">Recommandé</span>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="mb-2">Équilibre entre convivialité et sécurité pour la plupart des serveurs.</p>
+                        <ul class="small">
+                            <li>Limite de messages: 7 messages/10s</li>
+                            <li>Limite de mentions: 4 par message</li>
+                            <li>Détection des comptes récents</li>
+                            <li>Vérification des nouveaux membres</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="security-level level-high">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h3 class="h4">Niveau Élevé</h3>
+                        <span class="badge bg-danger">Restrictif</span>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="mb-2">Protection renforcée pour les serveurs sensibles ou ciblés.</p>
+                        <ul class="small">
+                            <li>Limite de messages: 5 messages/10s</li>
+                            <li>Limite de mentions: 3 par message</li>
+                            <li>Restriction des invitations</li>
+                            <li>Ban automatique des comptes suspects</li>
+                            <li>Protection anti-DDoS active</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="security-level level-extreme">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <h3 class="h4">Verrouillage</h3>
+                        <span class="badge bg-dark">Sécurité Maximale</span>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="mb-2">Mode urgence pour les situations de crise ou attaques en cours.</p>
+                        <ul class="small">
+                            <li>Verrouillage temporaire du serveur</li>
+                            <li>Restriction maximale des nouvelles arrivées</li>
+                            <li>Vérification manuelle requise</li>
+                            <li>Protection anti-DDoS agressive</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dangers du Spam -->
+    <div class="danger-section">
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="h4 mb-3">Pourquoi la protection est-elle essentielle?</h3>
+                <p>Les communautés Discord sont régulièrement la cible d'attaques variées qui peuvent rapidement perturber voire détruire l'ambiance et la structure d'un serveur.</p>
+                
+                <h5 class="mt-4">Types d'attaques courantes:</h5>
+                <ul>
+                    <li><strong>Raids coordonnés</strong> - Afflux massif de faux comptes</li>
+                    <li><strong>Spam de messages</strong> - Inondation de canaux avec du contenu indésirable</li>
+                    <li><strong>Mention spam</strong> - Harcèlement par notifications excessives</li>
+                    <li><strong>Phishing</strong> - Diffusion de liens malveillants</li>
+                    <li><strong>Self-bots</strong> - Automatisation d'actions malveillantes</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h3 class="h4 mb-3">Notre approche de la sécurité</h3>
+                <p>LeSéminaire[BOT] utilise une combinaison de:</p>
+                <ul>
+                    <li><strong>Détection comportementale</strong> - Analyse des schémas d'activité suspects</li>
+                    <li><strong>Filtrage intelligent</strong> - Identification du contenu nuisible</li>
+                    <li><strong>Mesures préventives</strong> - Vérification et restrictions adaptatives</li>
+                    <li><strong>Actions graduées</strong> - Réponses proportionnées aux menaces</li>
+                    <li><strong>Surveillance en temps réel</strong> - Détection rapide des anomalies</li>
+                </ul>
+                
+                <div class="alert alert-primary mt-4">
+                    <i data-feather="info" class="me-2"></i> Toutes les actions automatiques sont journalisées et peuvent être configurées selon vos préférences.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Commandes de Configuration -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Configuration Simple</h2>
+            <p class="text-center mb-4">Paramétrez la sécurité de votre serveur avec quelques commandes simples.</p>
+            
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemples</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>!security level</code></td>
+                            <td>Définit le niveau de protection contre le spam et les raids</td>
+                            <td><code>!security level medium</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>!security status</code></td>
+                            <td>Affiche les paramètres actuels et les statistiques</td>
+                            <td><code>!security status</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>!shield level</code></td>
+                            <td>Définit le niveau de protection du bouclier anti-DDoS</td>
+                            <td><code>!shield level high</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>!shield verify</code></td>
+                            <td>Configure le canal de vérification des nouveaux membres</td>
+                            <td><code>!shield verify #verification</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>!shield lockdown</code></td>
+                            <td>Active le mode verrouillage d'urgence sur le serveur</td>
+                            <td><code>!shield lockdown 30</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>!shield trust</code></td>
+                            <td>Ajoute un membre à la liste de confiance (non filtré)</td>
+                            <td><code>!shield trust @Utilisateur</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser Feather Icons
+        feather.replace();
+    });
+</script>
+{% endblock %}

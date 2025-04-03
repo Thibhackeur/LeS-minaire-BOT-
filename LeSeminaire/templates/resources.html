@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Ressources Artistiques{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <h1 class="display-5 fw-bold mb-5 text-center">Ressources Artistiques</h1>
+    
+    <div class="alert alert-primary mb-4">
+        <div class="d-flex align-items-center">
+            <i data-feather="info" class="me-2"></i>
+            <div>
+                <p class="mb-0">Le bot LeSéminaire permet d'accéder à une riche base de données de ressources artistiques partagées par la communauté. Voici un aperçu des ressources disponibles et comment y accéder via le bot.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4 mb-5">
+        <!-- Carte des Catégories -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-primary bg-opacity-75 text-white">
+                    <h3 class="mb-0">Catégories de Ressources</h3>
+                </div>
+                <div class="card-body">
+                    <p>Parcourez nos ressources par catégorie pour trouver exactement ce dont vous avez besoin.</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i data-feather="music" class="text-danger me-3" style="width: 30px; height: 30px;"></i>
+                                    <h5 class="mb-0">Audio</h5>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <small class="text-muted">Tutoriels MAO, mixing, sampling...</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i data-feather="film" class="text-warning me-3" style="width: 30px; height: 30px;"></i>
+                                    <h5 class="mb-0">Vidéo</h5>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <small class="text-muted">Montage, effets visuels, captation...</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i data-feather="image" class="text-success me-3" style="width: 30px; height: 30px;"></i>
+                                    <h5 class="mb-0">Graphisme</h5>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <small class="text-muted">Design, illustration, photo...</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i data-feather="briefcase" class="text-info me-3" style="width: 30px; height: 30px;"></i>
+                                    <h5 class="mb-0">Professionnel</h5>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <small class="text-muted">SACEM, intermittence, contrats...</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i data-feather="book" class="text-primary me-3" style="width: 30px; height: 30px;"></i>
+                                    <h5 class="mb-0">Formation</h5>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <small class="text-muted">Cours, méthodes, théorie...</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i data-feather="grid" class="text-secondary me-3" style="width: 30px; height: 30px;"></i>
+                                    <h5 class="mb-0">Général</h5>
+                                </div>
+                                <div class="card-footer bg-light">
+                                    <small class="text-muted">Ressources diverses et variées</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ressources Populaires -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success bg-opacity-75 text-white">
+                    <h3 class="mb-0">Ressources Populaires</h3>
+                </div>
+                <div class="card-body">
+                    <p>Voici quelques-unes des ressources les plus utiles pour notre communauté.</p>
+                    
+                    <div class="list-group">
+                        <a href="https://www.sacem.fr/" class="list-group-item list-group-item-action d-flex align-items-center" target="_blank">
+                            <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                                <i data-feather="file-text" class="text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">SACEM</h5>
+                                <p class="mb-0 text-muted small">Informations sur les droits d'auteur et la protection des œuvres musicales</p>
+                            </div>
+                        </a>
+                        <a href="https://www.pole-emploi.fr/spectacle/" class="list-group-item list-group-item-action d-flex align-items-center" target="_blank">
+                            <div class="bg-info bg-opacity-10 rounded p-2 me-3">
+                                <i data-feather="briefcase" class="text-info"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Intermittence du Spectacle</h5>
+                                <p class="mb-0 text-muted small">Guide complet sur le statut d'intermittent et les démarches associées</p>
+                            </div>
+                        </a>
+                        <a href="https://www.afdas.com/" class="list-group-item list-group-item-action d-flex align-items-center" target="_blank">
+                            <div class="bg-success bg-opacity-10 rounded p-2 me-3">
+                                <i data-feather="book-open" class="text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Formation Professionnelle</h5>
+                                <p class="mb-0 text-muted small">Informations sur les formations financées pour les artistes</p>
+                            </div>
+                        </a>
+                        <a href="https://linktr.ee/LeSeminaire" class="list-group-item list-group-item-action d-flex align-items-center" target="_blank">
+                            <div class="bg-warning bg-opacity-10 rounded p-2 me-3">
+                                <i data-feather="link" class="text-warning"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Linktr.ee du Séminaire</h5>
+                                <p class="mb-0 text-muted small">Collection de liens utiles pour la communauté</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card bg-dark text-white mb-5">
+        <div class="card-body p-4">
+            <h3 class="mb-3">Comment Accéder aux Ressources ?</h3>
+            <p>Le bot LeSéminaire vous permet d'accéder et de contribuer à la base de données de ressources directement depuis Discord.</p>
+            
+            <div class="row g-4 mt-3">
+                <div class="col-md-6">
+                    <div class="card bg-dark border border-secondary">
+                        <div class="card-header bg-dark border-secondary">
+                            <h5 class="mb-0">Consulter les Ressources</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <code>!resource list [catégorie]</code>
+                                <p class="small text-muted mt-1">Affiche les ressources disponibles, filtré par catégorie optionnelle.</p>
+                            </div>
+                            <div class="mb-3">
+                                <code>!resource search [terme]</code>
+                                <p class="small text-muted mt-1">Recherche des ressources par mot-clé.</p>
+                            </div>
+                            <div>
+                                <code>!resource categories</code>
+                                <p class="small text-muted mt-1">Affiche la liste des catégories disponibles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-dark border border-secondary">
+                        <div class="card-header bg-dark border-secondary">
+                            <h5 class="mb-0">Contribuer aux Ressources</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <code>!resource add [titre] [URL] [catégorie] [description]</code>
+                                <p class="small text-muted mt-1">Ajoute une nouvelle ressource à la base de données.</p>
+                            </div>
+                            <div class="alert alert-info bg-dark border-info text-info">
+                                <i data-feather="info" class="me-2"></i>
+                                Partagez vos trouvailles avec la communauté pour enrichir notre base de connaissances commune !
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <h3>Vous avez une ressource à partager ?</h3>
+        <p class="lead">Utilisez le bot sur Discord ou contactez-nous pour l'ajouter à notre base de données !</p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="https://discord.gg/leseminaire" class="btn btn-primary btn-lg">Rejoindre le Discord</a>
+            <a href="{{ url_for('contact') }}" class="btn btn-outline-secondary btn-lg">Nous Contacter</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

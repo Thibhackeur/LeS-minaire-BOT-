@@ -1,0 +1,1187 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Documentation détaillée des commandes{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-header {
+        background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+    }
+    .doc-content {
+        padding-bottom: 3rem;
+    }
+    .command-category {
+        margin-bottom: 3rem;
+        scroll-margin-top: 20px;
+    }
+    .command-item {
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--bs-primary);
+        padding-left: 1rem;
+    }
+    .command-name {
+        font-family: 'Courier New', monospace;
+        background-color: #f8f9fa;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+    .param {
+        color: var(--bs-danger);
+        font-style: italic;
+    }
+    .optional-param {
+        color: var(--bs-info);
+        font-style: italic;
+    }
+    .command-description {
+        margin-bottom: 1rem;
+    }
+    .permission-badge {
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+    }
+    .example-title {
+        font-size: 0.9rem;
+        font-weight: bold;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: var(--bs-secondary);
+    }
+    .example-code {
+        font-family: 'Courier New', monospace;
+        background-color: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    .toc {
+        position: sticky;
+        top: 20px;
+    }
+    .toc-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+    .toc-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .toc-list li {
+        margin-bottom: 0.5rem;
+    }
+    .toc-link {
+        display: block;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .toc-link:hover {
+        background-color: rgba(var(--bs-primary-rgb), 0.1);
+    }
+    .response-example {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--bs-success);
+        padding: 1rem;
+        margin-top: 1rem;
+        border-radius: 0.25rem;
+    }
+    .response-title {
+        font-weight: bold;
+        color: var(--bs-success);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .search-container {
+        margin-bottom: 2rem;
+    }
+    .command-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+        opacity: 0.7;
+    }
+    .syntax-section {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: rgba(var(--bs-light-rgb), 0.5);
+        border-radius: 0.25rem;
+    }
+    .syntax-title {
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    .copy-btn {
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        float: right;
+    }
+    .back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: none;
+        z-index: 1000;
+    }
+    .command-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .command-list-item {
+        margin-bottom: 0.25rem;
+    }
+    .result-highlight {
+        background-color: yellow;
+        padding: 0.1rem 0.2rem;
+    }
+    
+    /* Dark mode adjustments */
+    [data-bs-theme=dark] .command-name,
+    [data-bs-theme=dark] .example-code,
+    [data-bs-theme=dark] .response-example,
+    [data-bs-theme=dark] .syntax-section {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    [data-bs-theme=dark] .result-highlight {
+        background-color: rgba(255, 215, 0, 0.3);
+        color: white;
+    }
+    
+    [data-bs-theme=dark] .syntax-section {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .no-results {
+        padding: 2rem;
+        text-align: center;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="doc-header">
+    <div class="container">
+        <h1 class="display-4">Documentation détaillée des commandes</h1>
+        <p class="lead">Guide complet de toutes les commandes disponibles pour LeSéminaire[BOT]</p>
+    </div>
+</div>
+
+<div class="container doc-content">
+    <div class="row">
+        <!-- Table des matières -->
+        <div class="col-lg-3">
+            <div class="toc">
+                <div class="search-container">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i data-feather="search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="commandSearch" placeholder="Rechercher une commande...">
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Catégories</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="toc-list list-group list-group-flush">
+                            <li><a href="#general" class="toc-link list-group-item list-group-item-action"><i data-feather="info" class="me-2"></i> Commandes générales</a></li>
+                            <li><a href="#moderation" class="toc-link list-group-item list-group-item-action"><i data-feather="shield" class="me-2"></i> Modération</a></li>
+                            <li><a href="#roles" class="toc-link list-group-item list-group-item-action"><i data-feather="users" class="me-2"></i> Gestion des rôles</a></li>
+                            <li><a href="#music" class="toc-link list-group-item list-group-item-action"><i data-feather="music" class="me-2"></i> Musique</a></li>
+                            <li><a href="#resources" class="toc-link list-group-item list-group-item-action"><i data-feather="book" class="me-2"></i> Ressources artistiques</a></li>
+                            <li><a href="#collaborations" class="toc-link list-group-item list-group-item-action"><i data-feather="share-2" class="me-2"></i> Collaborations</a></li>
+                            <li><a href="#server" class="toc-link list-group-item list-group-item-action"><i data-feather="server" class="me-2"></i> Configuration du serveur</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Légende</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><span class="param">&lt;paramètre&gt;</span> - Paramètre obligatoire</p>
+                        <p><span class="optional-param">[paramètre]</span> - Paramètre optionnel</p>
+                        <p><span class="badge bg-danger">Admin</span> - Nécessite des permissions administrateur</p>
+                        <p><span class="badge bg-warning">Modérateur</span> - Nécessite des permissions de modérateur</p>
+                        <p><span class="badge bg-info">DJ</span> - Nécessite le rôle DJ</p>
+                        <p><span class="badge bg-success">Vérifié</span> - Nécessite d'être vérifié sur le serveur</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div class="col-lg-9">
+            <!-- Message "Aucun résultat" pour la recherche -->
+            <div class="no-results card bg-light">
+                <div class="card-body">
+                    <i data-feather="search" style="width: 48px; height: 48px; opacity: 0.3;" class="mb-3"></i>
+                    <h3>Aucun résultat trouvé</h3>
+                    <p>Essayez avec un autre terme de recherche.</p>
+                </div>
+            </div>
+            
+            <!-- Commandes Générales -->
+            <section id="general" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="info" class="me-2"></i> Commandes générales
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!aide [commande]</div>
+                    <div class="command-description">
+                        Affiche la liste des commandes disponibles ou des informations détaillées sur une commande spécifique.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!aide</code> - Affiche la liste des commandes<br>
+                        <code>!aide <span class="optional-param">[commande]</span></code> - Affiche les détails d'une commande spécifique
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!aide</div>
+                    <div class="example-code">!aide play</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            <strong>!play</strong><br>
+                            Joue une chanson à partir d'un titre YouTube ou d'une URL.<br>
+                            <strong>Utilisation:</strong> !play &lt;titre ou URL&gt;<br>
+                            <strong>Exemples:</strong><br>
+                            !play Daft Punk Get Lucky<br>
+                            !play https://www.youtube.com/watch?v=dQw4w9WgXcQ
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!ping</div>
+                    <div class="command-description">
+                        Vérifie la latence du bot et affiche le temps de réponse en millisecondes.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!ping</code> - Affiche la latence du bot
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!ping</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            Pong! 🏓 Latence: 42ms
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!info</div>
+                    <div class="command-description">
+                        Affiche des informations sur le bot, comme la version, le nombre de serveurs, etc.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!info</code> - Affiche les informations du bot
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!info</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            <strong>LeSéminaire[BOT]</strong> v1.2.0<br>
+                            Créé par l'équipe LeSéminaire<br>
+                            Serveurs: 10<br>
+                            Utilisateurs: 347<br>
+                            En ligne depuis: 7 jours 3 heures<br>
+                            <a href="https://leseminaire.org">Site web</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!residences</div>
+                    <div class="command-description">
+                        Affiche les informations sur les prochaines résidences artistiques du Séminaire.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!residences</code> - Affiche les informations sur les résidences à venir
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!residences</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            <strong>Prochaines résidences du Séminaire</strong><br>
+                            🏖️ <strong>Concarneau</strong> : 21 au 26 juillet 2025<br>
+                            🏙️ <strong>Marseille</strong> : 15 au 22 septembre 2025<br>
+                            🏔️ <strong>Grenoble</strong> : 10 au 17 novembre 2025<br><br>
+                            Pour plus d'informations et inscriptions, visitez <a href="https://leseminaire.org/residences">leseminaire.org/residences</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Modération -->
+            <section id="moderation" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="shield" class="me-2"></i> Commandes de modération
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!kick <span class="param">&lt;utilisateur&gt;</span> <span class="optional-param">[raison]</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Expulse un utilisateur du serveur avec une raison optionnelle.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!kick <span class="param">&lt;@utilisateur ou ID&gt;</span> <span class="optional-param">[raison]</span></code> - Expulse un utilisateur du serveur
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!kick @Utilisateur</div>
+                    <div class="example-code">!kick @Utilisateur Comportement inapproprié</div>
+                    <div class="example-code">!kick 123456789012345678 Spam répété</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ <strong>Utilisateur</strong> a été expulsé du serveur.<br>
+                            <strong>Raison:</strong> Comportement inapproprié
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!ban <span class="param">&lt;utilisateur&gt;</span> <span class="optional-param">[raison]</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Bannit un utilisateur du serveur avec une raison optionnelle.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!ban <span class="param">&lt;@utilisateur ou ID&gt;</span> <span class="optional-param">[raison]</span></code> - Bannit un utilisateur du serveur
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!ban @Utilisateur</div>
+                    <div class="example-code">!ban @Utilisateur Spam répété</div>
+                    <div class="example-code">!ban 123456789012345678 Violation des règles</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ <strong>Utilisateur</strong> a été banni du serveur.<br>
+                            <strong>Raison:</strong> Spam répété
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!mute <span class="param">&lt;utilisateur&gt;</span> <span class="optional-param">[durée]</span> <span class="optional-param">[raison]</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Rend un utilisateur muet pendant une durée spécifiée (en minutes par défaut).
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!mute <span class="param">&lt;@utilisateur&gt;</span> <span class="optional-param">[durée en minutes]</span> <span class="optional-param">[raison]</span></code> - Rend un utilisateur muet
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!mute @Utilisateur</div>
+                    <div class="example-code">!mute @Utilisateur 30</div>
+                    <div class="example-code">!mute @Utilisateur 30 Langage inapproprié</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ <strong>Utilisateur</strong> a été rendu muet pour 30 minutes.<br>
+                            <strong>Raison:</strong> Langage inapproprié
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!unmute <span class="param">&lt;utilisateur&gt;</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Retire le statut muet d'un utilisateur.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!unmute <span class="param">&lt;@utilisateur&gt;</span></code> - Retire le statut muet d'un utilisateur
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!unmute @Utilisateur</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ <strong>Utilisateur</strong> n'est plus muet.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!clear <span class="param">&lt;nombre&gt;</span> <span class="optional-param">[utilisateur]</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Supprime un nombre spécifié de messages dans le canal actuel, optionnellement filtré par utilisateur.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!clear <span class="param">&lt;nombre de messages&gt;</span> <span class="optional-param">[@utilisateur]</span></code> - Supprime des messages
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!clear 10</div>
+                    <div class="example-code">!clear 20 @Utilisateur</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ 10 messages ont été supprimés.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!warn <span class="param">&lt;utilisateur&gt;</span> <span class="param">&lt;raison&gt;</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Avertit un utilisateur avec une raison spécifiée.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!warn <span class="param">&lt;@utilisateur&gt;</span> <span class="param">&lt;raison&gt;</span></code> - Avertit un utilisateur
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!warn @Utilisateur Non-respect des règles du canal</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ⚠️ <strong>Utilisateur</strong> a reçu un avertissement.<br>
+                            <strong>Raison:</strong> Non-respect des règles du canal<br>
+                            <strong>Avertissements totaux:</strong> 2
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Gestion des rôles -->
+            <section id="roles" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="users" class="me-2"></i> Gestion des rôles
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!rolemenu create</div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Crée un nouveau menu de sélection de rôles.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!rolemenu create</code> - Crée un nouveau menu de rôles interactif
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!rolemenu create</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Menu de rôles créé avec succès !<br>
+                            <strong>ID du message:</strong> 123456789012345678<br>
+                            Utilisez la commande <code>!rolemenu add</code> pour ajouter des rôles à ce menu.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!rolemenu add <span class="param">&lt;message_id&gt;</span> <span class="param">&lt;emoji&gt;</span> <span class="param">&lt;rôle&gt;</span> <span class="optional-param">[description]</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Ajoute un rôle au menu de sélection spécifié par l'ID du message.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!rolemenu add <span class="param">&lt;message_id&gt;</span> <span class="param">&lt;emoji&gt;</span> <span class="param">&lt;@rôle&gt;</span> <span class="optional-param">[description]</span></code> - Ajoute un rôle au menu
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!rolemenu add 123456789012345678 🎧 @Ingé_son Expert en ingénierie sonore</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Rôle <strong>Ingé_son</strong> ajouté au menu avec l'emoji 🎧
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!rolemenu remove <span class="param">&lt;message_id&gt;</span> <span class="param">&lt;emoji&gt;</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Retire un rôle du menu de sélection spécifié par l'ID du message et l'emoji.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!rolemenu remove <span class="param">&lt;message_id&gt;</span> <span class="param">&lt;emoji&gt;</span></code> - Retire un rôle du menu
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!rolemenu remove 123456789012345678 🎧</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Rôle associé à l'emoji 🎧 retiré du menu
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!rolemenu delete <span class="param">&lt;message_id&gt;</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Supprime complètement un menu de sélection de rôles.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!rolemenu delete <span class="param">&lt;message_id&gt;</span></code> - Supprime un menu de rôles
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!rolemenu delete 123456789012345678</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Menu de rôles supprimé avec succès
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!verify <span class="param">&lt;utilisateur&gt;</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Attribue manuellement le rôle "Vérifié" à un utilisateur.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!verify <span class="param">&lt;@utilisateur&gt;</span></code> - Vérifie manuellement un utilisateur
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!verify @Utilisateur</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ <strong>Utilisateur</strong> a été vérifié manuellement et a reçu le rôle <strong>Vérifié</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Commandes musicales -->
+            <section id="music" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="music" class="me-2"></i> Commandes musicales
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!play <span class="param">&lt;titre ou URL&gt;</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Joue une chanson à partir d'un titre YouTube ou d'une URL.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!play <span class="param">&lt;titre ou URL&gt;</span></code> - Joue une chanson
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!play Daft Punk Get Lucky</div>
+                    <div class="example-code">!play https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            🎵 Lecture de <strong>Daft Punk - Get Lucky (Official Audio) ft. Pharrell Williams, Nile Rodgers</strong><br>
+                            Durée: 4:08 | Ajouté par: Utilisateur
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!pause</div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Met en pause la lecture en cours.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!pause</code> - Met en pause la lecture
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!pause</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ⏸️ Lecture mise en pause
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!resume</div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Reprend la lecture mise en pause.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!resume</code> - Reprend la lecture
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!resume</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ▶️ Lecture reprise
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!skip</div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Passe à la chanson suivante dans la file d'attente.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!skip</code> - Passe à la chanson suivante
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!skip</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ⏭️ Chanson passée<br>
+                            Lecture de <strong>Titre de la chanson suivante</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!queue <span class="optional-param">[page]</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Affiche la file d'attente des chansons.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!queue <span class="optional-param">[page]</span></code> - Affiche la file d'attente
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!queue</div>
+                    <div class="example-code">!queue 2</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            📋 <strong>File d'attente musicale</strong> (5 chansons au total)<br>
+                            <strong>En lecture:</strong> Daft Punk - Get Lucky [4:08]<br><br>
+                            1. Queen - Bohemian Rhapsody [5:55]<br>
+                            2. The Weeknd - Blinding Lights [3:22]<br>
+                            3. Billie Eilish - Bad Guy [3:14]<br>
+                            4. Kendrick Lamar - HUMBLE. [2:57]<br><br>
+                            Page 1/1 | Durée totale: 19:36
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!stop</div>
+                    <span class="badge bg-info permission-badge">DJ</span>
+                    <div class="command-description">
+                        Arrête la lecture et vide la file d'attente.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!stop</code> - Arrête la lecture et vide la file d'attente
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!stop</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ⏹️ Lecture arrêtée et file d'attente vidée
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!volume <span class="param">&lt;niveau&gt;</span></div>
+                    <span class="badge bg-info permission-badge">DJ</span>
+                    <div class="command-description">
+                        Ajuste le volume de lecture (de 0 à 100).
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!volume <span class="param">&lt;niveau&gt;</span></code> - Ajuste le volume (0-100)
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!volume 75</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            🔊 Volume réglé à 75%
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Ressources artistiques -->
+            <section id="resources" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="book" class="me-2"></i> Ressources artistiques
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!art_resources <span class="optional-param">[catégorie]</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Affiche les ressources artistiques disponibles, optionnellement filtrées par catégorie.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!art_resources</code> - Affiche toutes les catégories de ressources<br>
+                        <code>!art_resources <span class="optional-param">[catégorie]</span></code> - Affiche les ressources d'une catégorie spécifique
+                    </div>
+                    <div class="example-title">Exemples</div>
+                    <div class="example-code">!art_resources</div>
+                    <div class="example-code">!art_resources audio</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            📚 <strong>Ressources Artistiques - Catégorie: Audio</strong><br><br>
+                            1. <strong>Tutoriel Mixage Audio</strong><br>
+                            Guide complet pour le mixage audio professionnel<br>
+                            🔗 <a href="#">Voir la ressource</a><br><br>
+                            2. <strong>Masterisation en home studio</strong><br>
+                            Techniques de masterisation à petit budget<br>
+                            🔗 <a href="#">Voir la ressource</a><br><br>
+                            
+                            Page 1/1 | 2 ressources | Utilisez !art_resources pour voir toutes les catégories
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!resource_add <span class="param">&lt;titre&gt;</span> <span class="param">&lt;url&gt;</span> <span class="param">&lt;catégorie&gt;</span> <span class="optional-param">[description]</span></div>
+                    <span class="badge bg-warning permission-badge">Modérateur</span>
+                    <div class="command-description">
+                        Ajoute une nouvelle ressource artistique à la base de données.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!resource_add <span class="param">&lt;titre&gt;</span> <span class="param">&lt;url&gt;</span> <span class="param">&lt;catégorie&gt;</span> <span class="optional-param">[description]</span></code> - Ajoute une ressource
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!resource_add "Tutoriel Mixage Audio" https://exemple.com/tutoriel audio "Guide complet pour le mixage audio professionnel"</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Ressource ajoutée avec succès !<br>
+                            <strong>Titre:</strong> Tutoriel Mixage Audio<br>
+                            <strong>Catégorie:</strong> Audio<br>
+                            <strong>ID:</strong> 42
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!resource_search <span class="param">&lt;terme&gt;</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Recherche des ressources artistiques par terme de recherche.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!resource_search <span class="param">&lt;terme&gt;</span></code> - Recherche des ressources
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!resource_search mixage</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            🔍 <strong>Résultats de recherche pour "mixage"</strong><br><br>
+                            1. <strong>Tutoriel Mixage Audio</strong> (Audio)<br>
+                            Guide complet pour le mixage audio professionnel<br>
+                            🔗 <a href="#">Voir la ressource</a><br><br>
+                            
+                            1 ressource trouvée
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!resource_delete <span class="param">&lt;id&gt;</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Supprime une ressource artistique par son ID.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!resource_delete <span class="param">&lt;id&gt;</span></code> - Supprime une ressource
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!resource_delete 42</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Ressource #42 "Tutoriel Mixage Audio" supprimée avec succès
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Collaborations -->
+            <section id="collaborations" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="share-2" class="me-2"></i> Collaborations
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!collab_create <span class="param">&lt;titre&gt;</span> <span class="param">&lt;description&gt;</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Crée un nouveau projet de collaboration.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!collab_create <span class="param">&lt;titre&gt;</span> <span class="param">&lt;description&gt;</span></code> - Crée un projet de collaboration
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!collab_create "EP Été 2025" "Projet d'EP collaboratif avec 5 titres sur le thème de l'été"</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Projet de collaboration créé !<br>
+                            <strong>Titre:</strong> EP Été 2025<br>
+                            <strong>ID:</strong> 15<br>
+                            <strong>Créateur:</strong> Utilisateur<br><br>
+                            Les autres utilisateurs peuvent rejoindre ce projet avec la commande <code>!collab_join 15</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!collab_list</div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Affiche la liste des projets de collaboration actifs.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!collab_list</code> - Affiche les projets de collaboration
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!collab_list</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            🤝 <strong>Projets de collaboration actifs</strong><br><br>
+                            1. <strong>EP Été 2025</strong> (ID: 15)<br>
+                            Projet d'EP collaboratif avec 5 titres sur le thème de l'été<br>
+                            👤 3 participants | 📅 Créé il y a 2 jours<br><br>
+                            2. <strong>Remix Challenge</strong> (ID: 14)<br>
+                            Challenge de remix sur un sample fourni<br>
+                            👤 7 participants | 📅 Créé il y a 5 jours<br><br>
+                            
+                            Page 1/1 | 2 projets actifs
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!collab_join <span class="param">&lt;id&gt;</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Rejoint un projet de collaboration existant.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!collab_join <span class="param">&lt;id&gt;</span></code> - Rejoint un projet
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!collab_join 15</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Vous avez rejoint le projet <strong>EP Été 2025</strong> !<br>
+                            Ce projet compte maintenant 4 participants.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!collab_info <span class="param">&lt;id&gt;</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Affiche les détails d'un projet de collaboration.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!collab_info <span class="param">&lt;id&gt;</span></code> - Affiche les détails d'un projet
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!collab_info 15</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            🤝 <strong>EP Été 2025</strong> (ID: 15)<br>
+                            Projet d'EP collaboratif avec 5 titres sur le thème de l'été<br><br>
+                            <strong>Créateur:</strong> Utilisateur<br>
+                            <strong>Créé le:</strong> 01/04/2025<br>
+                            <strong>Participants (4):</strong> Utilisateur, Participant1, Participant2, Participant3<br>
+                            <strong>Statut:</strong> En cours<br><br>
+                            <strong>Dernière activité:</strong> Participant2 a ajouté un fichier il y a 3 heures
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!collab_leave <span class="param">&lt;id&gt;</span></div>
+                    <span class="badge bg-success permission-badge">Vérifié</span>
+                    <div class="command-description">
+                        Quitte un projet de collaboration.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!collab_leave <span class="param">&lt;id&gt;</span></code> - Quitte un projet
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!collab_leave 15</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Vous avez quitté le projet <strong>EP Été 2025</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Configuration du serveur -->
+            <section id="server" class="command-category">
+                <h2 class="border-bottom pb-2 mb-4">
+                    <i data-feather="server" class="me-2"></i> Configuration du serveur
+                </h2>
+                
+                <div class="command-item">
+                    <div class="command-name">!prefix <span class="param">&lt;nouveau_préfixe&gt;</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Change le préfixe de commande du bot pour ce serveur.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!prefix <span class="param">&lt;nouveau_préfixe&gt;</span></code> - Change le préfixe
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!prefix ?</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Préfixe changé pour <strong>?</strong><br>
+                            Utilisez <code>?help</code> pour voir la liste des commandes
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!welcome_channel <span class="param">&lt;canal&gt;</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Définit le canal pour les messages de bienvenue.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!welcome_channel <span class="param">&lt;#canal&gt;</span></code> - Définit le canal de bienvenue
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!welcome_channel #bienvenue</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Canal de bienvenue défini sur <strong>#bienvenue</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!logs_channel <span class="param">&lt;canal&gt;</span></div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Définit le canal pour les journaux de modération.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!logs_channel <span class="param">&lt;#canal&gt;</span></code> - Définit le canal des journaux
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!logs_channel #logs</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Canal des journaux défini sur <strong>#logs</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-item">
+                    <div class="command-name">!setup_verification</div>
+                    <span class="badge bg-danger permission-badge">Admin</span>
+                    <div class="command-description">
+                        Configure le système de vérification à deux étapes pour les nouveaux membres.
+                    </div>
+                    <div class="syntax-section">
+                        <div class="syntax-title">Syntaxe</div>
+                        <code>!setup_verification</code> - Configure le système de vérification
+                    </div>
+                    <div class="example-title">Exemple</div>
+                    <div class="example-code">!setup_verification</div>
+                    <div class="response-example">
+                        <div class="response-title">Exemple de réponse</div>
+                        <div>
+                            ✅ Le système de vérification à deux étapes a été configuré avec succès !<br><br>
+                            1. Canal <strong>#vérification</strong> créé<br>
+                            2. Rôles <strong>Non Vérifié</strong> et <strong>Vérifié</strong> créés<br>
+                            3. Permissions configurées<br><br>
+                            
+                            Les nouveaux membres recevront automatiquement le rôle <strong>Non Vérifié</strong> et devront compléter les deux étapes de vérification.
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Bouton retour en haut -->
+<button class="btn btn-primary rounded-circle back-to-top" id="backToTop" title="Retour en haut">
+    <i data-feather="chevron-up"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser Feather Icons
+        feather.replace();
+        
+        // Recherche de commandes
+        const searchInput = document.getElementById('commandSearch');
+        const commandItems = document.querySelectorAll('.command-item');
+        const commandCategories = document.querySelectorAll('.command-category');
+        const noResults = document.querySelector('.no-results');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            let resultsFound = false;
+            
+            if (searchTerm === '') {
+                // Afficher toutes les commandes et catégories si la recherche est vide
+                commandItems.forEach(item => item.style.display = 'block');
+                commandCategories.forEach(category => category.style.display = 'block');
+                noResults.style.display = 'none';
+                return;
+            }
+            
+            // Cacher toutes les catégories d'abord
+            commandCategories.forEach(category => category.style.display = 'none');
+            
+            // Filtrer les commandes
+            commandItems.forEach(item => {
+                const commandText = item.textContent.toLowerCase();
+                
+                if (commandText.includes(searchTerm)) {
+                    // Afficher cette commande
+                    item.style.display = 'block';
+                    
+                    // Réafficher sa catégorie parente
+                    const parentCategory = item.closest('.command-category');
+                    if (parentCategory) {
+                        parentCategory.style.display = 'block';
+                    }
+                    
+                    // Surligner les termes de recherche
+                    const commandName = item.querySelector('.command-name');
+                    const description = item.querySelector('.command-description');
+                    
+                    if (commandName && searchTerm.length > 2) {
+                        const originalName = commandName.textContent;
+                        const highlightedName = originalName.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="result-highlight">${match}</span>`
+                        );
+                        commandName.innerHTML = highlightedName;
+                    }
+                    
+                    if (description && searchTerm.length > 2) {
+                        const originalDesc = description.textContent;
+                        const highlightedDesc = originalDesc.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="result-highlight">${match}</span>`
+                        );
+                        description.innerHTML = highlightedDesc;
+                    }
+                    
+                    resultsFound = true;
+                } else {
+                    // Cacher cette commande
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Afficher un message si aucun résultat
+            noResults.style.display = resultsFound ? 'none' : 'block';
+        });
+        
+        // Bouton copier pour les exemples de code
+        document.querySelectorAll('.example-code').forEach(codeBlock => {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn btn-sm btn-outline-secondary copy-btn';
+            copyBtn.textContent = 'Copier';
+            copyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copié !';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                });
+            });
+            codeBlock.style.position = 'relative';
+            codeBlock.appendChild(copyBtn);
+        });
+        
+        // Bouton retour en haut
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.style.display = 'block';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Contact{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-card {
+        transition: transform 0.3s ease;
+    }
+    .contact-card:hover {
+        transform: translateY(-5px);
+    }
+    .form-floating > label {
+        padding-left: 1rem;
+    }
+    .form-control:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+    .required-field::after {
+        content: " *";
+        color: var(--bs-danger);
+    }
+    .captcha-container {
+        background-color: rgba(var(--bs-primary-rgb), 0.05);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    .input-error {
+        border-color: var(--bs-danger) !important;
+    }
+    .form-feedback {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .invalid-feedback {
+        display: none;
+        color: var(--bs-danger);
+    }
+    .form-control.is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .loading-overlay.show {
+        visibility: visible;
+        opacity: 1;
+    }
+    .loading-spinner {
+        width: 4rem;
+        height: 4rem;
+    }
+    .toast-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1100;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-4 text-center mb-5">Contactez-nous</h1>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-border text-light loading-spinner" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4 mb-md-0">
+            <div class="card h-100 shadow contact-card border-primary">
+                <div class="card-body text-center">
+                    <div class="rounded-circle bg-primary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i data-feather="mail" class="text-white" style="width: 40px; height: 40px;"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p>Pour toute question ou suggestion, n'hésitez pas à nous écrire.</p>
+                    <a href="mailto:contact@leseminaire.org" class="text-decoration-none">contact@leseminaire.org</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+            <div class="card h-100 shadow contact-card border-info">
+                <div class="card-body text-center">
+                    <div class="rounded-circle bg-info mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i data-feather="message-circle" class="text-white" style="width: 40px; height: 40px;"></i>
+                    </div>
+                    <h3>Discord</h3>
+                    <p>Rejoignez notre communauté Discord pour échanger avec d'autres artistes.</p>
+                    <a href="https://discord.gg/leseminaire" class="btn btn-info text-white">Rejoindre le serveur</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow contact-card border-success">
+                <div class="card-body text-center">
+                    <div class="rounded-circle bg-success mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i data-feather="globe" class="text-white" style="width: 40px; height: 40px;"></i>
+                    </div>
+                    <h3>Réseaux sociaux</h3>
+                    <p>Suivez-nous sur les réseaux sociaux pour rester informé de nos activités.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="https://instagram.com/leseminaire" target="_blank" class="text-decoration-none">
+                            <i data-feather="instagram" class="text-dark"></i>
+                        </a>
+                        <a href="https://twitter.com/leseminaire" target="_blank" class="text-decoration-none">
+                            <i data-feather="twitter" class="text-dark"></i>
+                        </a>
+                        <a href="https://youtube.com/leseminaire" target="_blank" class="text-decoration-none">
+                            <i data-feather="youtube" class="text-dark"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i data-feather="message-square" class="me-2"></i> Formulaire de contact</h3>
+                </div>
+                <div class="card-body">
+                    {% if success %}
+                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                        <i data-feather="check-circle" class="me-2"></i>
+                        <div>
+                            <strong>Message envoyé !</strong> Nous vous répondrons dans les plus brefs délais. Merci de nous avoir contacté !
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if error %}
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i data-feather="alert-circle" class="me-2"></i>
+                        <div>
+                            <strong>Erreur :</strong> {{ error }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('contact') }}" id="contactForm" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Votre nom" 
+                                           required value="{{ form_data.name if form_data and form_data.name else '' }}">
+                                    <label for="name" class="required-field"><i data-feather="user" class="me-1"></i> Votre nom</label>
+                                    <div class="invalid-feedback">
+                                        Veuillez entrer votre nom (2 caractères minimum).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Votre email" 
+                                           required value="{{ form_data.email if form_data and form_data.email else '' }}">
+                                    <label for="email" class="required-field"><i data-feather="mail" class="me-1"></i> Votre email</label>
+                                    <div class="invalid-feedback">
+                                        Veuillez entrer une adresse email valide.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <select class="form-select" id="subject" name="subject" required>
+                                        <option value="" {% if not form_data or not form_data.subject %}selected{% endif %} disabled>Choisissez un sujet</option>
+                                        <option value="Support technique" {% if form_data and form_data.subject == 'Support technique' %}selected{% endif %}>Support technique</option>
+                                        <option value="Suggestion" {% if form_data and form_data.subject == 'Suggestion' %}selected{% endif %}>Suggestion</option>
+                                        <option value="Partenariat" {% if form_data and form_data.subject == 'Partenariat' %}selected{% endif %}>Partenariat</option>
+                                        <option value="Bug" {% if form_data and form_data.subject == 'Bug' %}selected{% endif %}>Signaler un bug</option>
+                                        <option value="Autre" {% if form_data and form_data.subject == 'Autre' %}selected{% endif %}>Autre</option>
+                                    </select>
+                                    <label for="subject" class="required-field"><i data-feather="help-circle" class="me-1"></i> Sujet</label>
+                                    <div class="invalid-feedback">
+                                        Veuillez sélectionner un sujet.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="discord_username" name="discord_username" 
+                                           placeholder="Votre nom d'utilisateur Discord (optionnel)" 
+                                           value="{{ form_data.discord_username if form_data and form_data.discord_username else '' }}">
+                                    <label for="discord_username"><i data-feather="hash" class="me-1"></i> Nom Discord (optionnel)</label>
+                                    <small class="text-muted form-feedback">Si vous êtes sur notre serveur Discord, votre demande sera traitée en priorité.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="Votre numéro de téléphone (optionnel)" 
+                                       value="{{ form_data.phone if form_data and form_data.phone else '' }}">
+                                <label for="phone"><i data-feather="phone" class="me-1"></i> Téléphone (optionnel)</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="message" name="message" style="height: 150px" 
+                                          placeholder="Votre message" required>{{ form_data.message if form_data and form_data.message else '' }}</textarea>
+                                <label for="message" class="required-field"><i data-feather="message-square" class="me-1"></i> Votre message</label>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer un message (10 caractères minimum).
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Captcha -->
+                        <div class="captcha-container mb-3">
+                            <div class="mb-2">
+                                <label for="captcha_answer" class="form-label required-field">
+                                    <i data-feather="shield" class="me-1"></i> Question de sécurité : {{ captcha_question }}
+                                </label>
+                                <input type="text" class="form-control" id="captcha_answer" name="captcha_answer" required>
+                                <div class="invalid-feedback">
+                                    Veuillez répondre à la question de sécurité.
+                                </div>
+                            </div>
+                            <small class="text-muted">Cette question nous aide à vérifier que vous n'êtes pas un robot.</small>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="consent" name="consent" required>
+                            <label class="form-check-label required-field" for="consent">
+                                J'accepte que mes données soient utilisées pour me répondre
+                            </label>
+                            <div class="invalid-feedback">
+                                Vous devez accepter cette condition pour nous contacter.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" type="submit" id="submitButton">
+                                <i data-feather="send" class="me-2"></i> Envoyer mon message
+                            </button>
+                            <small class="text-muted text-center mt-2">
+                                <i data-feather="info" class="me-1" style="width: 14px; height: 14px;"></i>
+                                Les champs marqués d'un astérisque (*) sont obligatoires.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contactForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const submitButton = document.getElementById('submitButton');
+        const toastContainer = document.getElementById('toastContainer');
+        
+        // Fonction pour afficher un toast
+        function showToast(message, type) {
+            const toastId = 'toast-' + Date.now();
+            const toastHTML = `
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
+                    <div class="toast-header ${type === 'error' ? 'bg-danger text-white' : 'bg-success text-white'}">
+                        <strong class="me-auto">
+                            ${type === 'error' ? '<i data-feather="alert-circle" class="me-1"></i> Erreur' : '<i data-feather="check-circle" class="me-1"></i> Succès'}
+                        </strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            feather.replace();
+            
+            // Supprimer le toast après 5 secondes
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+        
+        // Fonction pour valider un champ
+        function validateField(field) {
+            let isValid = true;
+            
+            // Réinitialiser les classes d'erreur
+            field.classList.remove('is-invalid');
+            
+            // Validation pour les champs requis
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // Validation spécifique pour l'email
+            if (field.id === 'email' && field.value.trim()) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validation de la longueur du message
+            if (field.id === 'message' && field.value.trim().length < 10) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // Validation de la longueur du nom
+            if (field.id === 'name' && field.value.trim().length < 2) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Ajouter un écouteur d'événement pour la validation des champs au changement
+        const formFields = form.querySelectorAll('input, textarea, select');
+        formFields.forEach(field => {
+            field.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            // Pour les champs de type select
+            if (field.tagName === 'SELECT') {
+                field.addEventListener('change', function() {
+                    validateField(this);
+                });
+            }
+        });
+        
+        // Validation du formulaire lors de la soumission
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Valider tous les champs
+                let isFormValid = true;
+                formFields.forEach(field => {
+                    if (!validateField(field)) {
+                        isFormValid = false;
+                    }
+                });
+                
+                if (!isFormValid) {
+                    showToast('Veuillez corriger les erreurs dans le formulaire.', 'error');
+                    return;
+                }
+                
+                // Afficher l'overlay de chargement
+                loadingOverlay.classList.add('show');
+                submitButton.disabled = true;
+                
+                // Soumettre le formulaire
+                setTimeout(() => {
+                    form.submit();
+                }, 500);
+            });
+        }
+        
+        // Si un message de succès est affiché, réinitialiser le formulaire
+        if (document.querySelector('.alert-success')) {
+            form.reset();
+        }
+        
+        // Make sure Feather icons are initialized for any dynamic content
+        feather.replace();
+    });
+</script>
+{% endblock %}

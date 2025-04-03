@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - {{ 'Modifier' if resource else 'Ajouter' }} une Ressource{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{{ 'Modifier' if resource else 'Ajouter' }} une Ressource</h4>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-light">
+                    <i data-feather="arrow-left" class="me-1"></i> Retour
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_resource_edit', resource_id=resource.id) if resource else url_for('admin_resource_new') }}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Titre</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ resource.title if resource else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL</label>
+                        <input type="url" class="form-control" id="url" name="url" value="{{ resource.url if resource else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Catégorie</label>
+                        <select class="form-select" id="category" name="category" required>
+                            {% for category in categories %}
+                            <option value="{{ category.name }}" {% if resource and resource.category == category %}selected{% endif %}>
+                                {{ category.value }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ resource.description if resource else '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tags (séparés par des virgules)</label>
+                        <input type="text" class="form-control" id="tags" name="tags" value="{{ resource.tags if resource else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="added_by" class="form-label">Ajouté par</label>
+                        <input type="text" class="form-control" id="added_by" name="added_by" value="{{ resource.added_by if resource else '' }}">
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="approved" name="approved" {% if resource and resource.approved %}checked{% endif %}>
+                        <label class="form-check-label" for="approved">
+                            Approuvé
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i data-feather="save" class="me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistiques en temps réel - LeSéminaire[BOT]{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+<style>
+    .stat-card {
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: var(--bs-dark);
+        border: 1px solid var(--bs-gray-700);
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--bs-info);
+    }
+    
+    .stat-title {
+        font-size: 1rem;
+        color: var(--bs-light);
+        margin-bottom: 5px;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    
+    .server-card {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--bs-gray-700);
+        background-color: var(--bs-dark);
+    }
+    
+    .premium-badge {
+        background-color: var(--bs-warning);
+        color: var(--bs-dark);
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    
+    .regular-badge {
+        background-color: var(--bs-secondary);
+        color: var(--bs-light);
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .activity-item {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        background-color: var(--bs-gray-800);
+    }
+    
+    .activity-time {
+        font-size: 0.8rem;
+        color: var(--bs-gray-400);
+    }
+    
+    .activity-command {
+        background-color: var(--bs-primary-bg-subtle);
+        border-left: 4px solid var(--bs-primary);
+    }
+    
+    .activity-join {
+        background-color: var(--bs-success-bg-subtle);
+        border-left: 4px solid var(--bs-success);
+    }
+    
+    .activity-error {
+        background-color: var(--bs-danger-bg-subtle);
+        border-left: 4px solid var(--bs-danger);
+    }
+    
+    .metric-card {
+        text-align: center;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        background-color: var(--bs-gray-800);
+    }
+    
+    .metric-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--bs-info);
+    }
+    
+    .metric-title {
+        font-size: 0.9rem;
+        color: var(--bs-gray-400);
+    }
+    
+    .map-container {
+        height: 400px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .server-info {
+        font-size: 0.9rem;
+        color: var(--bs-light);
+    }
+    
+    .uptime-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+    
+    .uptime-unit {
+        text-align: center;
+        margin: 0 10px;
+    }
+    
+    .uptime-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--bs-info);
+    }
+    
+    .uptime-label {
+        font-size: 0.8rem;
+        color: var(--bs-gray-400);
+    }
+    
+    #dataRefreshTime {
+        font-size: 0.8rem;
+        color: var(--bs-gray-400);
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="display-4 mb-4">Tableau de bord en temps réel</h1>
+            <p id="dataRefreshTime">Dernière mise à jour: {{ last_update }}</p>
+        </div>
+    </div>
+    
+    <!-- Ligne 1: Statistiques principales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-title">Utilisateurs</div>
+                <div class="stat-value">{{ total_users }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-title">Serveurs</div>
+                <div class="stat-value">{{ total_servers }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-title">Commandes aujourd'hui</div>
+                <div class="stat-value">{{ commands_today }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-title">Musiques jouées</div>
+                <div class="stat-value">{{ total_songs }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ligne 2: Statistiques système -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="stat-card">
+                <div class="stat-title">Uptime</div>
+                <div class="uptime-container">
+                    <div class="uptime-unit">
+                        <div class="uptime-value">{{ uptime.days }}</div>
+                        <div class="uptime-label">Jours</div>
+                    </div>
+                    <div class="uptime-unit">
+                        <div class="uptime-value">{{ uptime.hours }}</div>
+                        <div class="uptime-label">Heures</div>
+                    </div>
+                    <div class="uptime-unit">
+                        <div class="uptime-value">{{ uptime.minutes }}</div>
+                        <div class="uptime-label">Minutes</div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">Version:</span>
+                            <span class="badge bg-info">{{ version }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-card">
+                <div class="stat-title">Performance</div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <span class="d-block">Ping</span>
+                            <span class="h3 text-info">{{ ping }} ms</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <span class="d-block">CPU</span>
+                            <span class="h3 text-warning">{{ cpu_usage }}%</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <span class="d-block">RAM</span>
+                            <span class="h3 text-danger">{{ ram_usage }} MB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ligne 3: Graphiques -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="stat-card">
+                <h5>Croissance des utilisateurs</h5>
+                <div class="chart-container">
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="stat-card">
+                <h5>Activité par heure</h5>
+                <div class="chart-container">
+                    <canvas id="hourlyActivityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="stat-card">
+                <h5>Commandes par catégorie</h5>
+                <div class="chart-container">
+                    <canvas id="commandCategoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="stat-card">
+                <h5>Nouveaux membres</h5>
+                <div class="chart-container">
+                    <canvas id="newUsersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ligne 4: Métriques et activité récente -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4 class="mb-3">Métriques avancées</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-title">Taux d'engagement</div>
+                        <div class="metric-value">{{ engagement_rate }}%</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-title">Taux de réponse</div>
+                        <div class="metric-value">{{ response_rate }}%</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-title">Commandes/serveur</div>
+                        <div class="metric-value">{{ avg_commands_per_server }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-title">Temps de réponse moyen</div>
+                        <div class="metric-value">{{ avg_response_time }} ms</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h4 class="mt-4 mb-3">Taux de rétention</h4>
+            <div class="chart-container" style="height: 200px;">
+                <canvas id="retentionChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <h4 class="mb-3">Activité récente</h4>
+            <div class="activity-list">
+                {% for activity in activities %}
+                    <div class="activity-item {{ 'activity-command' if activity.type == 'Command' else 'activity-join' if activity.type == 'Server Join' else 'activity-error' if activity.type == 'Error' else '' }}">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ activity.type }}</strong>
+                            <span class="activity-time">{{ activity.time }}</span>
+                        </div>
+                        <div>{{ activity.content }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <h4 class="mt-4 mb-3">Serveurs connectés</h4>
+            <div class="server-list">
+                {% for server in servers %}
+                    <div class="server-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ server.name }}</h5>
+                            <span class="{{ 'premium-badge' if server.premium else 'regular-badge' }}">
+                                {{ 'Premium' if server.premium else 'Standard' }}
+                            </span>
+                        </div>
+                        <div class="server-info mt-2">
+                            <span>{{ server.member_count }} membres</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ligne 5: Carte des utilisateurs -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="stat-card">
+                <h4 class="mb-3">Répartition mondiale des utilisateurs</h4>
+                <div id="userMap" class="map-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<script>
+    // Configuration commune pour les graphiques
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: 'rgba(255, 255, 255, 0.8)'
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                    color: 'rgba(255, 255, 255, 0.7)'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                    color: 'rgba(255, 255, 255, 0.7)'
+                }
+            }
+        }
+    };
+
+    // Graphique de croissance des utilisateurs
+    const userGrowthChart = new Chart(
+        document.getElementById('userGrowthChart'),
+        {
+            type: 'line',
+            data: {
+                labels: {{ user_growth_labels|safe }},
+                datasets: [{
+                    label: 'Nombre d\'utilisateurs',
+                    data: {{ user_growth_data|safe }},
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    tension: 0.2,
+                    fill: true
+                }]
+            },
+            options: chartOptions
+        }
+    );
+
+    // Graphique d'activité par heure
+    const hourlyActivityChart = new Chart(
+        document.getElementById('hourlyActivityChart'),
+        {
+            type: 'bar',
+            data: {
+                labels: {{ hourly_activity_labels|safe }},
+                datasets: [{
+                    label: 'Messages par heure',
+                    data: {{ hourly_activity_data|safe }},
+                    backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptions
+        }
+    );
+
+    // Graphique de commandes par catégorie
+    const commandCategoryChart = new Chart(
+        document.getElementById('commandCategoryChart'),
+        {
+            type: 'doughnut',
+            data: {
+                labels: {{ command_category_labels|safe }},
+                datasets: [{
+                    data: {{ command_category_data|safe }},
+                    backgroundColor: [
+                        'rgba(0, 123, 255, 0.7)',
+                        'rgba(220, 53, 69, 0.7)',
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(40, 167, 69, 0.7)',
+                        'rgba(111, 66, 193, 0.7)',
+                        'rgba(23, 162, 184, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(0, 123, 255, 1)',
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(111, 66, 193, 1)',
+                        'rgba(23, 162, 184, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+    // Graphique des nouveaux utilisateurs
+    const newUsersChart = new Chart(
+        document.getElementById('newUsersChart'),
+        {
+            type: 'line',
+            data: {
+                labels: {{ new_users_labels|safe }},
+                datasets: [{
+                    label: 'Nouveaux membres',
+                    data: {{ new_users_data|safe }},
+                    borderColor: 'rgba(111, 66, 193, 1)',
+                    backgroundColor: 'rgba(111, 66, 193, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                ...chartOptions,
+                elements: {
+                    point: {
+                        radius: 4
+                    }
+                }
+            }
+        }
+    );
+
+    // Graphique de rétention
+    const retentionChart = new Chart(
+        document.getElementById('retentionChart'),
+        {
+            type: 'bar',
+            data: {
+                labels: {{ retention_labels|safe }},
+                datasets: [{
+                    label: 'Taux de rétention (%)',
+                    data: {{ retention_data|safe }},
+                    backgroundColor: 'rgba(23, 162, 184, 0.7)',
+                    borderColor: 'rgba(23, 162, 184, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...chartOptions,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        }
+    );
+
+    // Initialiser la carte
+    const map = L.map('userMap').setView([30, 0], 2);
+
+    // Ajouter la couche de tuiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+    }).addTo(map);
+
+    // Ajouter les marqueurs
+    const mapData = {{ map_data|safe }};
+    
+    mapData.forEach(location => {
+        const marker = L.marker([location.lat, location.lng]).addTo(map);
+        marker.bindPopup(`<b>${location.location}</b><br>${location.count} utilisateurs`);
+    });
+</script>
+{% endblock %}

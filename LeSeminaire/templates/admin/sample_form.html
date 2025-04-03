@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - {{ 'Modifier' if sample else 'Ajouter' }} un Sample{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{{ 'Modifier' if sample else 'Ajouter' }} un Sample Musical</h4>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-light">
+                    <i data-feather="arrow-left" class="me-1"></i> Retour
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_sample_edit', sample_id=sample.id) if sample else url_for('admin_sample_new') }}">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Titre</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ sample.title if sample else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL</label>
+                        <input type="url" class="form-control" id="url" name="url" value="{{ sample.url if sample else '' }}" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="bpm" class="form-label">BPM</label>
+                                <input type="number" class="form-control" id="bpm" name="bpm" value="{{ sample.bpm if sample else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="key" class="form-label">Tonalité</label>
+                                <input type="text" class="form-control" id="key" name="key" value="{{ sample.key if sample else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="duration" class="form-label">Durée (secondes)</label>
+                                <input type="number" class="form-control" id="duration" name="duration" value="{{ sample.duration if sample else '' }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="genre" class="form-label">Genre</label>
+                        <input type="text" class="form-control" id="genre" name="genre" value="{{ sample.genre if sample else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ sample.description if sample else '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tags (séparés par des virgules)</label>
+                        <input type="text" class="form-control" id="tags" name="tags" value="{{ sample.tags if sample else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="added_by" class="form-label">Ajouté par (ID Discord)</label>
+                        <input type="text" class="form-control" id="added_by" name="added_by" value="{{ sample.added_by if sample else '' }}" required>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn btn-info text-white">
+                            <i data-feather="save" class="me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

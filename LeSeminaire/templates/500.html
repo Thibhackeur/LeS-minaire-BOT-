@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Erreur Serveur - LeSéminaire[BOT]{% endblock %}
+
+{% block content %}
+<div class="py-5 text-center">
+    <div class="mb-4">
+        <span class="display-1 fw-bold text-danger">500</span>
+    </div>
+    <h1 class="display-5 mb-4">Erreur Serveur</h1>
+    <p class="lead mb-5">Oups ! Il semble qu'il y ait un problème technique de notre côté.</p>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark mb-4">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title mb-3">Que faire maintenant ?</h4>
+                    <p class="card-text mb-3">Nos ingénieurs son et techniciens ont été alertés et travaillent à résoudre le problème. Voici ce que vous pouvez faire :</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i data-feather="refresh-cw" class="me-2"></i> Rafraîchir la Page
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                            <i data-feather="home" class="me-2"></i> Retour à l'Accueil
+                        </a>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-danger">
+                            <i data-feather="alert-circle" class="me-2"></i> Signaler le Problème
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

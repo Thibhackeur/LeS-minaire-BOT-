@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Accueil{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-4">LeSéminaire<span class="text-primary">[BOT]</span></h1>
+            <p class="lead mb-4">Un bot Discord puissant pour les communautés artistiques, offrant des outils de gestion communautaire, de modération et de collaboration entre artistes.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4">
+                <a href="https://discord.com/api/oauth2/authorize?client_id=1356981134151520296&permissions=8&scope=bot" class="btn btn-primary btn-lg px-4">Inviter le Bot</a>
+                <a href="{{ url_for('features') }}" class="btn btn-outline-secondary btn-lg px-4">Découvrir</a>
+                <a href="{{ url_for('realtime_stats') }}" class="btn btn-info btn-lg px-4">Statistiques</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-primary rounded-circle p-3 me-3">
+                            <i data-feather="monitor" class="text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">Statut du Bot</h3>
+                            <p class="text-success mb-0">En ligne et opérationnel</p>
+                        </div>
+                    </div>
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item d-flex align-items-center">
+                            <i data-feather="check-circle" class="text-success me-2"></i>
+                            Messages de bienvenue personnalisés
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i data-feather="check-circle" class="text-success me-2"></i>
+                            Système de vérification en deux étapes
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i data-feather="check-circle" class="text-success me-2"></i>
+                            Attribution automatique de rôles
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i data-feather="check-circle" class="text-success me-2"></i>
+                            Création de studios privés
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <i data-feather="check-circle" class="text-success me-2"></i>
+                            Commandes artistiques interactives
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <h2 class="text-center mb-5">Fonctionnalités Principales</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                            <i data-feather="users" class="text-primary"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Gestion Communautaire</h5>
+                    </div>
+                    <p class="card-text">Accueillez vos nouveaux membres avec des messages personnalisés et un système de vérification sécurisé à deux étapes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                            <i data-feather="shield" class="text-primary"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Modération Avancée</h5>
+                    </div>
+                    <p class="card-text">Protégez votre serveur avec des outils de modération puissants et un système d'attribution automatique de rôles.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
+                            <i data-feather="music" class="text-primary"></i>
+                        </div>
+                        <h5 class="card-title mb-0">Outils Artistiques</h5>
+                    </div>
+                    <p class="card-text">Facilitez la collaboration artistique avec des commandes dédiées pour partager des ressources et des samples musicaux.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body p-4">
+                    <h3 class="mb-3">Statistiques en temps réel</h3>
+                    <p class="mb-4">Suivez les performances et l'engagement du bot avec notre nouveau visualiseur de statistiques</p>
+                    <a href="{{ url_for('realtime_stats') }}" class="btn btn-info btn-lg">
+                        <i data-feather="activity" class="me-2"></i> Voir le tableau de bord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-white">
+        <div class="card-body p-5 text-center">
+            <h2 class="card-title mb-4">Prêt à améliorer votre serveur Discord ?</h2>
+            <p class="card-text mb-4">Invitez LeSéminaire[BOT] dès maintenant et découvrez toutes ses fonctionnalités !</p>
+            <a href="https://discord.com/api/oauth2/authorize?client_id=1356981134151520296&permissions=8&scope=bot" class="btn btn-primary btn-lg">Inviter le Bot</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

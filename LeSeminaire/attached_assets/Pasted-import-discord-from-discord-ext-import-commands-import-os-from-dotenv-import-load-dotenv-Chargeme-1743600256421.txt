@@ -1,0 +1,120 @@
+import discord
+from discord.ext import commands
+import os
+from dotenv import load_dotenv
+
+# Chargement des variables d'environnement
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+# Intents
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+
+# Bot setup
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+# Rôles à créer
+roles_to_create = ["Artiste", "Mentor", "Admin", "Membre", "Résident"]
+
+# Salons à créer (catégorie: [(text_channels), (voice_channels)])
+server_structure = {
+    "INFORMATIONS": [
+        ("règlement", "text"),
+        ("annonces", "text"),
+        ("présentation-artistes", "text"),
+        ("présentation-équipe", "text"),
+        ("prochaines-résidences", "text"),
+        ("liens-importants", "text")
+    ],
+    "COMMUNAUTÉ": [
+        ("général", "text"),
+        ("vos-sons", "text"),
+        ("vos-photos", "text"),
+        ("vos-visuels", "text"),
+        ("collaborations", "text"),
+        ("memes-et-vibes", "text"),
+        ("retex-séminaires", "text")
+    ],
+    "CRÉATION ARTISTIQUE": [
+        ("idées-de-sons", "text"),
+        ("textes-et-prods", "text"),
+        ("ateliers-virtuels", "text"),
+        ("ressources-créa", "text"),
+        ("écoute-collective", "voice"),
+        ("clips-et-concepts", "text")
+    ],
+    "PROFESSIONNALISATION": [
+        ("infos-intermittence", "text"),
+        ("stratégie-carrière", "text"),
+        ("droits-auteur-sacem", "text"),
+        ("cible-et-identité-artistique", "text"),
+        ("tools-promo-et-com", "text"),
+        ("presskit-portfolios", "text"),
+        ("mentorat-questions", "text"),
+        ("ressources-pro", "text")
+    ],
+    "LOGISTIQUE RÉSIDENCES": [
+        ("infos-lieux", "text"),
+        ("inscriptions", "text"),
+        ("planning", "text"),
+        ("covoiturage", "text"),
+        ("besoins-techniques", "text"),
+        ("matos-à-apporter", "text"),
+        ("media-séminaire", "text")
+    ],
+    "VOCAL": [
+        ("discussion libre", "voice"),
+        ("écoutes partagées", "voice"),
+        ("freestyle", "voice"),
+        ("brainstorming", "voice"),
+        ("sessions-mix", "voice")
+    ]
+}
+
+@bot.event
+async def on_ready():
+    print(f"Connecté en tant que {bot.user.name}")
+
+@bot.event
+async def on_member_join(member):
+    channel = discord.utils.get(member.guild.text_channels, name="général")
+    if channel:
+        await channel.send(f"Bienvenue {member.mention} dans **Le Séminaire** ! Présente-toi dans #présentation-artistes \U0001f525")
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def setup(ctx):
+    guild = ctx.guild
+
+    # Créer les rôles
+    for role in roles_to_create:
+        if not discord.utils.get(guild.roles, name=role):
+            await guild.create_role(name=role)
+
+    # Créer les catégories et salons
+    for category_name, channels in server_structure.items():
+        category = await guild.create_category(category_name)
+        for name, type_ in channels:
+            if type_ == "text":
+                await guild.create_text_channel(name=name, category=category)
+            elif type_ == "voice":
+                await guild.create_voice_channel(name=name, category=category)
+
+    await ctx.send("Le serveur a été configuré avec succès !")
+
+@bot.command()
+async def residence(ctx):
+    await ctx.send("Prochaines résidences :\n- Concarneau : 15 au 22 mai\n- Lyon : 12 au 19 juillet\n(Met à jour avec !setup si besoin)")
+
+@bot.command()
+async def resources(ctx):
+    await ctx.send("Ressources utiles :\n- SACEM : https://www.sacem.fr\n- Intermittence : https://www.cnc.fr/intermittents\n- Thibaverse : https://linktr.ee/thibaees")
+
+@bot.command()
+async def thibaverse(ctx):
+    await ctx.send("Bienvenue dans le Thibaverse ✨ Chaque dimension cache une vérité artistique.")
+
+# Lancer le bot
+bot.run(TOKEN)

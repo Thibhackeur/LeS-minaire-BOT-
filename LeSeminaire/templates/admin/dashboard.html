@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block title %}LeSéminaire[BOT] - Tableau de Bord Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .resource-table th, .resource-table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Tableau de Bord Administrateur</h2>
+    <div>
+        <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger">
+            <i data-feather="log-out" class="me-1"></i> Déconnexion
+        </a>
+    </div>
+</div>
+
+<!-- Stats Overview -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Ressources</h5>
+                <div class="stat-value">{{ stats.resources }}</div>
+                <div class="mt-2">Total des ressources partagées</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Samples</h5>
+                <div class="stat-value">{{ stats.samples }}</div>
+                <div class="mt-2">Samples musicaux disponibles</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Collaborations</h5>
+                <div class="stat-value">{{ stats.collaborations }}</div>
+                <div class="mt-2">Projets collaboratifs</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Commandes</h5>
+                <div class="stat-value">{{ stats.commands }}</div>
+                <div class="mt-2">Commandes exécutées cette semaine</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tab Navigation -->
+<ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="true">Ressources</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="samples-tab" data-bs-toggle="tab" data-bs-target="#samples" type="button" role="tab" aria-controls="samples" aria-selected="false">Samples</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="collabs-tab" data-bs-toggle="tab" data-bs-target="#collabs" type="button" role="tab" aria-controls="collabs" aria-selected="false">Collaborations</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Paramètres</button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="adminTabsContent">
+    <!-- Resources Tab -->
+    <div class="tab-pane fade show active" id="resources" role="tabpanel" aria-labelledby="resources-tab">
+        <div class="card shadow">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Ressources Artistiques</h5>
+                <a href="{{ url_for('admin_resource_new') }}" class="btn btn-sm btn-primary">
+                    <i data-feather="plus" class="me-1"></i> Ajouter
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover resource-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Ajouté par</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for resource in resources %}
+                            <tr>
+                                <td>{{ resource.id }}</td>
+                                <td>{{ resource.title }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ resource.category.value }}</span>
+                                </td>
+                                <td>{{ resource.added_by }}</td>
+                                <td>{{ resource.added_at.strftime('%d/%m/%Y') }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('admin_resource_edit', resource_id=resource.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i data-feather="edit" class="icon-sm"></i>
+                                        </a>
+                                        <a href="{{ url_for('admin_resource_delete', resource_id=resource.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?')">
+                                            <i data-feather="trash-2" class="icon-sm"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Samples Tab -->
+    <div class="tab-pane fade" id="samples" role="tabpanel" aria-labelledby="samples-tab">
+        <div class="card shadow">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Samples Musicaux</h5>
+                <a href="{{ url_for('admin_sample_new') }}" class="btn btn-sm btn-primary">
+                    <i data-feather="plus" class="me-1"></i> Ajouter
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover resource-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>BPM</th>
+                                <th>Tonalité</th>
+                                <th>Genre</th>
+                                <th>Ajouté par</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sample in samples %}
+                            <tr>
+                                <td>{{ sample.id }}</td>
+                                <td>{{ sample.title }}</td>
+                                <td>{{ sample.bpm or '--' }}</td>
+                                <td>{{ sample.key or '--' }}</td>
+                                <td>{{ sample.genre or '--' }}</td>
+                                <td>{{ sample.added_by }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('admin_sample_edit', sample_id=sample.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i data-feather="edit" class="icon-sm"></i>
+                                        </a>
+                                        <a href="{{ url_for('admin_sample_delete', sample_id=sample.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce sample ?')">
+                                            <i data-feather="trash-2" class="icon-sm"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Collaborations Tab -->
+    <div class="tab-pane fade" id="collabs" role="tabpanel" aria-labelledby="collabs-tab">
+        <div class="card shadow">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Projets de Collaboration</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover resource-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Statut</th>
+                                <th>Créé par</th>
+                                <th>Membres</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for collab in collaborations %}
+                            <tr>
+                                <td>{{ collab.id }}</td>
+                                <td>{{ collab.title }}</td>
+                                <td>
+                                    {% if collab.status == "En cours" %}
+                                    <span class="badge bg-success">En cours</span>
+                                    {% elif collab.status == "Terminé" %}
+                                    <span class="badge bg-info">Terminé</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">Abandonné</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ collab.created_by }}</td>
+                                <td>{{ collab.members|length }}</td>
+                                <td>{{ collab.created_at.strftime('%d/%m/%Y') }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('admin_collab_view', collab_id=collab.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i data-feather="eye" class="icon-sm"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Tab -->
+    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="card shadow">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Paramètres Administrateur</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_settings_update') }}">
+                    <div class="mb-3">
+                        <label for="admin_username" class="form-label">Nom d'utilisateur admin</label>
+                        <input type="text" class="form-control" id="admin_username" name="admin_username" value="{{ settings.admin_username }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="admin_password" class="form-label">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                        <input type="password" class="form-control" id="admin_password" name="admin_password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="welcome_message" class="form-label">Message de bienvenue par défaut</label>
+                        <textarea class="form-control" id="welcome_message" name="welcome_message" rows="3">{{ settings.welcome_message }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer les paramètres</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize feather icons after tab change
+        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            feather.replace();
+        });
+    });
+</script>
+{% endblock %}

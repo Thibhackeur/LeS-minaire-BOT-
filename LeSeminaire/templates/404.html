@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Non Trouvée - LeSéminaire[BOT]{% endblock %}
+
+{% block content %}
+<div class="py-5 text-center">
+    <div class="mb-4">
+        <span class="display-1 fw-bold text-danger">404</span>
+    </div>
+    <h1 class="display-5 mb-4">Page Non Trouvée</h1>
+    <p class="lead mb-5">La page que vous recherchez semble avoir disparu dans les profondeurs du studio...</p>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark mb-4">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title mb-3">Que faire maintenant ?</h4>
+                    <p class="card-text mb-3">Voici quelques liens qui pourraient vous être utiles :</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i data-feather="home" class="me-2"></i> Retour à l'Accueil
+                        </a>
+                        <a href="{{ url_for('features') }}" class="btn btn-outline-secondary">
+                            <i data-feather="list" class="me-2"></i> Découvrir les Fonctionnalités
+                        </a>
+                        <a href="https://discord.gg/leseminaire" class="btn btn-outline-secondary" target="_blank">
+                            <i data-feather="message-square" class="me-2"></i> Rejoindre le Discord
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
