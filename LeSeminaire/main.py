@@ -123,9 +123,7 @@ if __name__ == "__main__":
         # Si nous sommes dans le workflow "Discord Bot Runner", démarrer le bot Discord
         if os.environ.get("DISCORD_BOT") == "1" or os.environ.get("RUN_DISCORD_BOT") == "1":
             run_discord_bot()
-        else:
-            # Sinon, démarrer l'application web sur le port 5000 par défaut
-            run_web_app(5000)
+  
     else:
         # Si des arguments sont fournis, les traiter comme avant
         if sys.argv[1] == "bot":
